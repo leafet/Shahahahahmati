@@ -34,8 +34,6 @@ namespace Systems.Movement
             int casted_x_pos = Mathf.FloorToInt(endPos.x / CELL_SIZE);
             int casted_y_pos = Mathf.FloorToInt(endPos.y / CELL_SIZE);
             
-            Debug.Log(casted_x_pos + " " + casted_y_pos + " " + endPos.x / (CELL_SIZE * 2) + " " + endPos.y / (CELL_SIZE * 2));
-            
             if (_selectedFigure == null) return;
             
             _selectedFigure.MoveOnGrid(casted_x_pos, casted_y_pos);
