@@ -4,6 +4,7 @@ using Systems.Input;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Systems.Globals.Constants;
+using static UnityEngine.Object;
 
 namespace Systems.Movement
 {

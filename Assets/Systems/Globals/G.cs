@@ -1,6 +1,8 @@
 using System;
+using Systems.Combat.EnemySpawnSystem;
 using Systems.Figures;
 using Systems.GameField;
+using Systems.HelpSystems;
 using Systems.Input;
 using Systems.Interface;
 using Systems.Movement;
@@ -16,6 +18,7 @@ public class G : MonoBehaviour
     public OnGameUI OnGameUI;
     public InputService InputService;
     public FigureInteractionService FigureInteractionService;
+    public EnemySpawnService EnemySpawnService;
     
     void Awake()
     {
@@ -36,8 +39,17 @@ public class G : MonoBehaviour
         initializeInputService();
 
         initializeFigureMovementService();
+
+        initializeEnemySpawnService();
         
         initializeOnGameUI();
+    }
+
+    private void initializeEnemySpawnService()
+    {
+        EnemySpawnService ecs = gameObject.AddComponent<EnemySpawnService>();
+        ecs.Initialize();
+        EnemySpawnService = ecs;
     }
 
     private void initializeFigureMovementService()
@@ -82,31 +94,6 @@ public class G : MonoBehaviour
 
     private void initializeDebugFeatures()
     {
-        TEMPORARY_create_piece(0, 0, FigureType.Pawn, FigureTeam.Team1);
-        TEMPORARY_create_piece(1, 0, FigureType.Pawn, FigureTeam.Team1);
-        TEMPORARY_create_piece(2, 0, FigureType.Pawn, FigureTeam.Team1);
-        
-        TEMPORARY_create_piece(0, GRID_SIZE - 1, FigureType.Pawn, FigureTeam.Team2);
-        TEMPORARY_create_piece(1, GRID_SIZE - 1, FigureType.Pawn, FigureTeam.Team2);
-        TEMPORARY_create_piece(2, GRID_SIZE - 1, FigureType.Pawn, FigureTeam.Team2);
-        
-        TEMPORARY_create_piece(4, 4, FigureType.Bishop, FigureTeam.Team1);
-    }
-
-    private void TEMPORARY_create_piece(int x, int y, FigureType type, FigureTeam team)
-    {
-        GameObject FigureGO = new GameObject($"{type.ToString()} {team.ToString()}");
-        
-        switch (type)
-        {
-            case FigureType.Pawn:
-                Pawn pawn = FigureGO.AddComponent<Pawn>();
-                pawn.Initialize(Instance.GameField.CellsGrid[x][y], type, team);
-                break;
-            case FigureType.Bishop:
-                Bishop bishop = FigureGO.AddComponent<Bishop>();
-                bishop.Initialize(Instance.GameField.CellsGrid[x][y], type, team);
-                break;
-        }
+        GameManagementActions.create_piece(4, 4, FigureType.Bishop, FigureTeam.Team1);
     }
 }
