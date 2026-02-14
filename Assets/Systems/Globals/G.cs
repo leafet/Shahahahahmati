@@ -38,13 +38,15 @@ public class G : MonoBehaviour
 
         initializeDebugFeatures();
 
+        initializeTurnManager();
+        
         initializeInputService();
 
         initializeFigureMovementService();
 
         initializeEnemySpawnService();
 
-        initializeTurnManager();
+        
         
         initializeOnGameUI();
     }
@@ -105,6 +107,6 @@ public class G : MonoBehaviour
 
     private void initializeDebugFeatures()
     {
-        GameManagementActions.create_piece(4, 4, FigureType.Bishop, FigureTeam.Team1);
+        
     }
 }
