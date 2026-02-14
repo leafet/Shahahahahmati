@@ -8,18 +8,12 @@ namespace Systems.Combat.EnemySpawnSystem
 {
     public class EnemySpawnService : MonoBehaviour
     {
+        public List<BaseFigure> Enemies = new List<BaseFigure>();
+        
         public void Initialize()
         {
-            foreach(List<Cell> cells in G.Instance.GameField.CellsGrid) 
-            {
-                foreach (Cell cell in cells)
-                {
-                    GameManagementActions.create_piece(cell.Grid_Coordinates.x, cell.Grid_Coordinates.y, FigureType.Bishop, FigureTeam.Team1);
-                }
-            }
-            
-            GameManagementActions.remove_piece_at_grid_by_coords(5, 5);
-            GameManagementActions.create_piece(5, 5, FigureType.Bishop, FigureTeam.Team2);
+            GameManagementActions.create_piece(5, 5, FigureType.Pawn, FigureTeam.Team2);
+            GameManagementActions.create_piece(5, 6, FigureType.Bishop, FigureTeam.Team1);
         }
     }
 }

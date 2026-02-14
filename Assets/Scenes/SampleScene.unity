@@ -373,6 +373,7 @@ MonoBehaviour:
   OnGameUI: {fileID: 0}
   InputService: {fileID: 0}
   FigureInteractionService: {fileID: 0}
+  EnemySpawnService: {fileID: 0}
 --- !u!4 &680178320
 Transform:
   m_ObjectHideFlags: 0

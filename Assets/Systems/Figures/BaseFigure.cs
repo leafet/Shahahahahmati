@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Systems.Combat.EnemyAI;
 using Systems.GameField;
 using Unity.VisualScripting;
 using static Systems.Globals.Constants;
@@ -31,6 +32,8 @@ namespace Systems.Figures
         public FigureTeam FigureTeam;
         
         private Sprite PieceSprite;
+
+        public BaseEnemyAI myAi;
         
         public void Initialize(Cell current_cell, FigureType type, FigureTeam team)
         {
@@ -44,6 +47,22 @@ namespace Systems.Figures
                 this;
             
             add_piece_sprite();
+            decide_is_i_am_enemy();
+        }
+
+        private void decide_is_i_am_enemy()
+        {
+            if (FigureTeam == FigureTeam.Team2)
+            {
+                BaseEnemyAI ai = gameObject.AddComponent<BaseEnemyAI>();
+                ai.Initialize();
+                myAi = ai;
+            }
+            else if (FigureTeam == FigureTeam.Team1)
+            {
+                myAi = null;
+            }
+                
         }
 
         private void add_piece_sprite()

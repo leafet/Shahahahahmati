@@ -1,4 +1,5 @@
-﻿using Systems.Figures;
+﻿using JetBrains.Annotations;
+using Systems.Figures;
 using UnityEngine;
 using static UnityEngine.Object;
 
@@ -6,9 +7,9 @@ namespace Systems.HelpSystems
 {
     public static class GameManagementActions
     {
-        public static void create_piece(int x, int y, FigureType type, FigureTeam team)
+        public static BaseFigure create_piece(int x, int y, FigureType type, FigureTeam team)
         {
-            if(G.Instance.GameField.CellsGrid[x][y].Figure != null) return;
+            if(G.Instance.GameField.CellsGrid[x][y].Figure != null) return null;
             
             GameObject FigureGO = new GameObject($"{type.ToString()} {team.ToString()}");
         
@@ -23,6 +24,8 @@ namespace Systems.HelpSystems
                     bishop.Initialize(G.Instance.GameField.CellsGrid[x][y], type, team);
                     break;
             }
+            
+            return FigureGO.GetComponent<BaseFigure>();
         }
         
         public static void remove_piece_at_grid_by_coords(int x, int y)

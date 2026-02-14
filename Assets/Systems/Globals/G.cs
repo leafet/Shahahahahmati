@@ -6,6 +6,7 @@ using Systems.HelpSystems;
 using Systems.Input;
 using Systems.Interface;
 using Systems.Movement;
+using Systems.TurnSystem;
 using Unity.VisualScripting;
 using UnityEngine;
 using static Systems.Globals.Constants;
@@ -19,6 +20,7 @@ public class G : MonoBehaviour
     public InputService InputService;
     public FigureInteractionService FigureInteractionService;
     public EnemySpawnService EnemySpawnService;
+    public TurnService TurnService;
     
     void Awake()
     {
@@ -41,8 +43,17 @@ public class G : MonoBehaviour
         initializeFigureMovementService();
 
         initializeEnemySpawnService();
+
+        initializeTurnManager();
         
         initializeOnGameUI();
+    }
+
+    private void initializeTurnManager()
+    {
+        TurnService turnService = gameObject.AddComponent<TurnService>();
+        turnService.Initialize();
+        TurnService = turnService;
     }
 
     private void initializeEnemySpawnService()
