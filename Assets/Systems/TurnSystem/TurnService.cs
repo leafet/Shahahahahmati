@@ -24,12 +24,11 @@ namespace Systems.TurnSystem
         public event Action OnEnemyTurnEnd;
         public event Action OnRoundEnd;
         
-        public GameState CurrentState { get; private set; } = GameState.PlayerTurn;
+        [SerializeField] public GameState CurrentState = GameState.PlayerTurn;
         private bool _isProcessingTurn = false;
 
         public void Initialize()
         {
-            Debug.Log("Initializing TurnService");
             StartCoroutine(GameLoop());
         }
 
@@ -39,28 +38,23 @@ namespace Systems.TurnSystem
             {
                 CurrentState = GameState.PlayerTurn;  
                 OnPlayerTurnStart?.Invoke();
-                Debug.Log("Player Turn Start");
                 
                 yield return StartCoroutine(WaitForPlayerTurn());
                 
                 OnPlayerTurnEnd?.Invoke();
-                Debug.Log("Player Turn End");
                 
                 yield return new WaitForSeconds(0.2f);
 
                 CurrentState = GameState.EnemyTurn;
                 OnEnemyTurnStart?.Invoke();
-                Debug.Log("Enemies Turn Started");
                 
                 yield return StartCoroutine(ProcessEnemyTurns());
                 
                 OnEnemyTurnEnd?.Invoke();
-                Debug.Log("Enemies Turn Ended");
                 
                 CurrentState = GameState.RoundEnding;
                 OnRoundEnd?.Invoke();
-                Debug.Log("Round Ended");
-
+                
                 yield return new WaitForSeconds(0.5f);
             }
         }
@@ -84,7 +78,8 @@ namespace Systems.TurnSystem
 
         private IEnumerator ProcessEnemyTurns()
         {
-            var enemies = G.Instance.EnemySpawnService.Enemies.Where(e => e.FigureTeam == FigureTeam.Team2).ToList();
+            var enemies = G.Instance.EnemySpawnService.Enemies
+                .Where(e => e.FigureTeam == FigureTeam.Team2 && e.isActiveAndEnabled).ToList();
 
             if (enemies.Count == 0)
             {

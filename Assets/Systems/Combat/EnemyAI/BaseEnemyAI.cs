@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Systems.Figures;
 using Systems.Globals;
 using UnityEngine;
@@ -7,6 +9,8 @@ namespace Systems.Combat.EnemyAI
 {
     public class BaseEnemyAI : MonoBehaviour
     {
+        
+        
         private BaseFigure _figure;
         
         [SerializeField] private float thinkingTime = 0.5f;
@@ -19,13 +23,11 @@ namespace Systems.Combat.EnemyAI
 
         public IEnumerator ExecuteTurn()
         {
-            Debug.Log($"{name}: ExecutingTurn");
-
+            if (!gameObject.activeInHierarchy) yield return null;
+            
             Vector2Int moveLocation = DecideMove();
             
             _figure.MoveOnGrid(moveLocation.x, moveLocation.y);
-            
-            Debug.Log($"{name}: FinishedTurn");
             
             yield return null;
         }
@@ -33,53 +35,39 @@ namespace Systems.Combat.EnemyAI
         private Vector2Int DecideMove()
         {
             var currentPos = _figure.GetGridCoordinates();
+            Vector2Int enemyPos = GetEnemyPos();
             
-            int randomValue = Random.Range(1, 4);
+            int dx = enemyPos.x - currentPos.x;
+            int dy = enemyPos.y - currentPos.y;
 
-            int new_x = currentPos.x;
-            int new_y = currentPos.y;
-            
-            switch (randomValue)
+            if (Mathf.Abs(dx) == 1 && Mathf.Abs(dy) == 1)
             {
-                case 1:
-                    new_x = currentPos.x + 1;
-                    new_y = currentPos.y;
-                    break;
-                case 2:
-                    new_x = currentPos.x - 1;
-                    new_y = currentPos.y;
-                    break;
-                case 3:
-                    new_x = currentPos.x;
-                    new_y = currentPos.y + 1;
-                    break;
-                case 4:
-                    new_x = currentPos.x;
-                    new_y = currentPos.y - 1;
-                    break;
-            }
-
-            Vector2Int enemyPos = GetEnemyPosIfExist();
-
-            Debug.Log($"{name}: to enemy {Vector2Int.Distance(currentPos, enemyPos)}");
-            
-            if (Vector2Int.Distance(currentPos, enemyPos) < 2)
-            {
-                new_x = enemyPos.x;
-                new_y = enemyPos.y;
+                return enemyPos;
             }
             
-            new_y = Mathf.Clamp(new_y, 0, Constants.GRID_SIZE);
-            new_x = Mathf.Clamp(new_x, 0, Constants.GRID_SIZE);
+            List<Vector2Int> availableMoves = new List<Vector2Int>()
+            {
+                new Vector2Int(currentPos.x + 1, currentPos.y),
+                new Vector2Int(currentPos.x - 1, currentPos.y),
+                new Vector2Int(currentPos.x, currentPos.y + 1),
+                new Vector2Int(currentPos.x, currentPos.y - 1)
+            };
+
+            System.Random rnd = new System.Random();
+            List<Vector2Int> shuffled_moves = availableMoves.OrderBy(m => rnd.Next()).ToList();
+
+            foreach (Vector2Int move in shuffled_moves)
+            {
+                if (_figure.TryMove(move.x, move.y))
+                {
+                    return move;
+                }
+            }
             
-            Vector2Int newPos = new Vector2Int(new_x, new_y);
-            
-            Debug.Log($"{name}: DecideMove({newPos.x}, {newPos.y}) from {currentPos.x},{currentPos.y}");
-            
-            return newPos;
+            return currentPos;
         }
 
-        private Vector2Int GetEnemyPosIfExist()
+        private Vector2Int GetEnemyPos()
         {
             BaseFigure enemy = G.Instance.EnemySpawnService.Player;
           

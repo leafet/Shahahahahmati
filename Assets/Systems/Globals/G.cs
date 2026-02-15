@@ -38,15 +38,13 @@ public class G : MonoBehaviour
 
         initializeDebugFeatures();
 
+        initializeEnemySpawnService();
+        
         initializeTurnManager();
         
         initializeInputService();
 
         initializeFigureMovementService();
-
-        initializeEnemySpawnService();
-
-        
         
         initializeOnGameUI();
     }

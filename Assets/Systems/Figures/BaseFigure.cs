@@ -62,7 +62,6 @@ namespace Systems.Figures
             {
                 myAi = null;
             }
-                
         }
 
         private void add_piece_sprite()
@@ -76,70 +75,62 @@ namespace Systems.Figures
             
             gameObject.AddComponent<BoxCollider2D>();
         }
-        
-        protected virtual bool ValidateMove(int x, int y)
-        {
-            if (!IsInsideBoard(x, y))
-            {
-                Debug.Log("Outside board");
-                return false; 
-            }
-
-
-            if (IsAllyAt(x, y))
-            {
-                Debug.Log("Ally");
-                return false;
-            }
-                
-
-            return true;
-        }
 
         protected bool IsInsideBoard(int x, int y)
         {
             return x >= 0 && x < GRID_SIZE && y >= 0 && y < GRID_SIZE;
-        }
-
-        protected bool IsCellEmpty(int x, int y)
-        {
-            return G.Instance.GameField.CellsGrid[x][y].Figure == null;
-        }
-
-        protected bool IsEnemyAt(int x, int y)
-        {
-            var fig = G.Instance.GameField.CellsGrid[x][y].Figure;
-            return fig != null && fig.FigureTeam != FigureTeam;
-        }
-
-        protected bool IsAllyAt(int x, int y)
-        {
-            var fig = G.Instance.GameField.CellsGrid[x][y].Figure;
-            return fig is not null && fig.FigureTeam == FigureTeam;
         }
         
         public Vector2Int GetGridCoordinates()
         {
             return Current_cell.Grid_Coordinates;
         }
+
+        public bool TryMove(int x, int y)
+        {
+            if (!IsInsideBoard(x, y)) return false;
+            
+            var targetCell = G.Instance.GameField.CellsGrid[x][y];
+            var targetFigure = targetCell.Figure;
+            
+            if (targetFigure is not null && targetFigure.FigureTeam == FigureTeam)
+                return false;
+
+            if (targetFigure is null)
+            {
+                if (!CanMoveToEmptyCell(x, y)) return false;
+            }
+            else
+            {
+                if (!CanAttackAtCell(x, y)) return false;
+            }
+
+            return true;
+        }
+
+        protected virtual bool CanMoveToEmptyCell(int x, int y)
+        {
+            return true;
+        }
+
+        protected virtual bool CanAttackAtCell(int x, int y)
+        {
+            return CanMoveToEmptyCell(x, y);
+        }
         
         public void MoveOnGrid(int x, int y)
         {
-            if (!ValidateMove(x, y))
-            {
-                return;
-            }
+            if (!TryMove(x, y)) return;
             
             var grid = G.Instance.GameField.CellsGrid;
             var targetCell = grid[x][y];
             
-            if (targetCell.Figure != null && targetCell.Figure.FigureTeam != FigureTeam)
+            if (targetCell.Figure is not null && targetCell.Figure.FigureTeam != FigureTeam)
             {
-                Destroy(targetCell.Figure.gameObject);
+                targetCell.Figure.gameObject.SetActive(false);
             }
 
             grid[Current_cell.Grid_Coordinates.x][Current_cell.Grid_Coordinates.y].Figure = null;
-
             Current_cell = targetCell;
             targetCell.Figure = this;
 
