@@ -23,13 +23,13 @@ namespace Systems.Combat.EnemyAI
 
         public IEnumerator ExecuteTurn()
         {
-            if (!gameObject.activeInHierarchy) yield return null;
+            if (!_figure.LivingComponent.IsAlive) yield break;
             
             Vector2Int moveLocation = DecideMove();
             
             _figure.MoveOnGrid(moveLocation.x, moveLocation.y);
             
-            yield return null;
+            if (!_figure.LivingComponent.IsAlive) yield break;
         }
 
         private Vector2Int DecideMove()

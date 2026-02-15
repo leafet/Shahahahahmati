@@ -42,8 +42,7 @@ namespace Systems.Figures
         {
             Current_cell = current_cell;
             Type = type;
-            scalePositionToFieldSize();
-
+            
             FigureTeam = team;
             
             G.Instance.GameField.CellsGrid[current_cell.Grid_Coordinates.x][current_cell.Grid_Coordinates.y].Figure =
@@ -52,6 +51,8 @@ namespace Systems.Figures
             add_piece_sprite();
             decide_is_i_am_enemy();
             addHealthComponent();
+            
+            scalePositionToFieldSize();
         }
 
         private void addHealthComponent()
@@ -148,8 +149,8 @@ namespace Systems.Figures
             
             if (targetFigure is not null && targetFigure.FigureTeam != FigureTeam)
             {
-                targetFigure.LivingComponent.TakeDamage(5);
-                this.LivingComponent.TakeDamage(5);
+                targetFigure.LivingComponent.TakeDamage(20);
+                LivingComponent.TakeDamage(1);
 
                 if (!targetFigure.LivingComponent.IsAlive)
                 {
@@ -174,11 +175,12 @@ namespace Systems.Figures
 
         private void scalePositionToFieldSize()
         {
-            
             Vector3 newPos = 
                 new Vector3(Current_cell.Grid_Coordinates.x * CELL_SIZE + CELL_SIZE / 2, 
                     Current_cell.Grid_Coordinates.y * CELL_SIZE + CELL_SIZE / 2, 
                     -1);
+         
+            if (!LivingComponent.IsAlive) return;
             
             StartCoroutine(MoveOverTime(newPos, 0.5f));
         }
