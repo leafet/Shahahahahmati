@@ -23,7 +23,7 @@ namespace Systems.Figures
             int dx = Mathf.Abs(x - from.x);
             int dy = Mathf.Abs(y - from.y);
             
-            return dx == 1 && dy == 0;
+            return dx == 1 && dy == 1;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using Systems.Combat.EnemyAI;
+using Systems.Combat.Health;
 using Systems.GameField;
 using Unity.VisualScripting;
 using static Systems.Globals.Constants;
@@ -29,11 +30,13 @@ namespace Systems.Figures
         protected Cell Current_cell {get; private set;}
         public FigureType Type {get; private set;}
 
-        public FigureTeam FigureTeam;
+        public FigureTeam FigureTeam {get; private set;}
         
         private Sprite PieceSprite;
 
-        public BaseEnemyAI myAi;
+        public BaseEnemyAI myAi {get; private set;}
+
+        public LivingObjectService LivingComponent {get; private set;}
         
         public void Initialize(Cell current_cell, FigureType type, FigureTeam team)
         {
@@ -48,6 +51,23 @@ namespace Systems.Figures
             
             add_piece_sprite();
             decide_is_i_am_enemy();
+            addHealthComponent();
+        }
+
+        private void addHealthComponent()
+        {
+            LivingComponent = gameObject.AddComponent<LivingObjectService>();
+            LivingComponent.Initialize(20);
+
+            LivingComponent.OnDeath += HandleDeath;
+        }
+
+        private void HandleDeath(GameObject obj)
+        {
+            if (Current_cell is not null)
+            {
+                Current_cell.Figure = null;
+            }
         }
 
         private void decide_is_i_am_enemy()
@@ -124,16 +144,31 @@ namespace Systems.Figures
             
             var grid = G.Instance.GameField.CellsGrid;
             var targetCell = grid[x][y];
+            var targetFigure = targetCell.Figure;
             
-            if (targetCell.Figure is not null && targetCell.Figure.FigureTeam != FigureTeam)
+            if (targetFigure is not null && targetFigure.FigureTeam != FigureTeam)
             {
-                targetCell.Figure.gameObject.SetActive(false);
+                targetFigure.LivingComponent.TakeDamage(5);
+                this.LivingComponent.TakeDamage(5);
+
+                if (!targetFigure.LivingComponent.IsAlive)
+                {
+                    grid[Current_cell.Grid_Coordinates.x][Current_cell.Grid_Coordinates.y].Figure = null;
+                    Current_cell = targetCell;
+                    targetCell.Figure = this;
+                }
+                else
+                {
+                    return;
+                }
             }
-
-            grid[Current_cell.Grid_Coordinates.x][Current_cell.Grid_Coordinates.y].Figure = null;
-            Current_cell = targetCell;
-            targetCell.Figure = this;
-
+            else
+            {
+                grid[Current_cell.Grid_Coordinates.x][Current_cell.Grid_Coordinates.y].Figure = null;
+                Current_cell = targetCell;
+                targetCell.Figure = this;
+            }
+            
             scalePositionToFieldSize();
         }
 

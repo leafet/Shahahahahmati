@@ -16,7 +16,7 @@ namespace Systems.TurnSystem
     
     public class TurnService : MonoBehaviour
     {
-        [SerializeField] private float delayBetweenEnemies = 0.3f;
+        [SerializeField] private float delayBetweenEnemies = 0.1f;
         
         public event Action OnPlayerTurnStart;
         public event Action OnPlayerTurnEnd;
@@ -78,17 +78,13 @@ namespace Systems.TurnSystem
 
         private IEnumerator ProcessEnemyTurns()
         {
-            var enemies = G.Instance.EnemySpawnService.Enemies
-                .Where(e => e.FigureTeam == FigureTeam.Team2 && e.isActiveAndEnabled).ToList();
-
-            if (enemies.Count == 0)
-            {
-                Debug.Log("No enemies found");
-                yield break;
-            }
+            var enemies = G.Instance.EnemySpawnService.ActiveEnemies.ToList();
 
             foreach (var enemy in enemies)
             {
+                if (enemy is null || !enemy.LivingComponent.IsAlive)
+                    continue;
+                
                 if (enemy.myAi is not null)
                     yield return StartCoroutine(enemy.myAi.ExecuteTurn());
                 else
