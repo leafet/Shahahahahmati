@@ -45,7 +45,7 @@ namespace Systems.Figures
             
             FigureTeam = team;
             
-            G.Instance.GameField.CellsGrid[current_cell.Grid_Coordinates.x][current_cell.Grid_Coordinates.y].Figure =
+            G.Instance.GameField.CellsGrid[current_cell.Grid_Coordinates.x, current_cell.Grid_Coordinates.y].Figure =
                 this;
             
             add_piece_sprite();
@@ -111,7 +111,7 @@ namespace Systems.Figures
         {
             if (!IsInsideBoard(x, y)) return false;
             
-            var targetCell = G.Instance.GameField.CellsGrid[x][y];
+            var targetCell = G.Instance.GameField.CellsGrid[x, y];
             var targetFigure = targetCell.Figure;
             
             if (targetFigure is not null && targetFigure.FigureTeam == FigureTeam)
@@ -144,7 +144,7 @@ namespace Systems.Figures
             if (!TryMove(x, y)) return;
             
             var grid = G.Instance.GameField.CellsGrid;
-            var targetCell = grid[x][y];
+            var targetCell = grid[x, y];
             var targetFigure = targetCell.Figure;
             
             if (targetFigure is not null && targetFigure.FigureTeam != FigureTeam)
@@ -154,7 +154,7 @@ namespace Systems.Figures
 
                 if (!targetFigure.LivingComponent.IsAlive)
                 {
-                    grid[Current_cell.Grid_Coordinates.x][Current_cell.Grid_Coordinates.y].Figure = null;
+                    grid[Current_cell.Grid_Coordinates.x, Current_cell.Grid_Coordinates.y].Figure = null;
                     Current_cell = targetCell;
                     targetCell.Figure = this;
                 }
@@ -165,7 +165,7 @@ namespace Systems.Figures
             }
             else
             {
-                grid[Current_cell.Grid_Coordinates.x][Current_cell.Grid_Coordinates.y].Figure = null;
+                grid[Current_cell.Grid_Coordinates.x, Current_cell.Grid_Coordinates.y].Figure = null;
                 Current_cell = targetCell;
                 targetCell.Figure = this;
             }

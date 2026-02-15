@@ -18,8 +18,8 @@ namespace Systems.Combat.EnemySpawnSystem
         {
             ActiveEnemies = new List<BaseFigure>();
             
-            Player = GameManagementActions.create_piece(5, 5, FigureType.Bishop, FigureTeam.Team1);
-            for (int i = 0; i < 7; i++)
+            Player = GameManagementActions.create_piece(5, 5, FigureType.Pawn, FigureTeam.Team1);
+            for (int i = 0; i < 10; i++)
             {
                 int pos_x = Random.Range(0, Constants.GRID_SIZE);
                 int pos_y = Random.Range(0, Constants.GRID_SIZE);

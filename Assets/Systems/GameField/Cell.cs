@@ -1,22 +1,32 @@
 ﻿using JetBrains.Annotations;
 using Systems.Figures;
 using UnityEngine;
-using UnityEngine.Serialization;
+using static Systems.Globals.Constants;
 
 namespace Systems.GameField
 {
-    public class Cell
+    public class Cell : MonoBehaviour
     {
-        [CanBeNull] public BaseFigure Figure;
-        
+        public BaseFigure Figure;
         public Vector2Int Grid_Coordinates;
+        
         private SpriteRenderer _cell_renderer;
         
-        public void Initialize(Vector2Int cell_coordinates,Vector3 cell_position, BaseFigure figure)
+        public void Initialize(Vector2Int cell_coordinates, bool is_cell_even)
         {
             Grid_Coordinates = cell_coordinates;
             
-            Figure = figure;
+            transform.position = new Vector3(
+                Grid_Coordinates.x * CELL_SIZE + CELL_SIZE / 2
+                , Grid_Coordinates.y * CELL_SIZE + CELL_SIZE / 2
+                , 0);
+
+            _cell_renderer = gameObject.AddComponent<SpriteRenderer>();
+            
+            var whiteSprite = Resources.Load<Sprite>("Sprites/FieldSprites/CellWhite");
+            var blackSprite = Resources.Load<Sprite>("Sprites/FieldSprites/CellBlack");
+            
+            _cell_renderer.sprite = is_cell_even ? whiteSprite : blackSprite;
         }
     }
 }
