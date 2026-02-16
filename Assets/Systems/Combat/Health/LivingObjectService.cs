@@ -22,12 +22,17 @@ namespace Systems.Combat.Health
         public void TakeDamage(int amount)
         {
             if (!IsAlive) return;
-            
+
+            int previousHealth = currentHealth;
             currentHealth -= amount;
+            
+            Debug.Log($"[{gameObject.name}] Получено {amount} урона. Здоровье: {previousHealth} -> {currentHealth}/{maxHealth}");
+            
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
             if (currentHealth <= 0)
             {
+                Debug.Log($"[{gameObject.name}] Объект погиб");
                 Die();
             }
         }

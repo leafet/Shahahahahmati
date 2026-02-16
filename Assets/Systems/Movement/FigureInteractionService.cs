@@ -40,20 +40,22 @@ namespace Systems.Movement
         private void OnLeftRelease(object sender, EventArgs e)
         {
             if (!_canMove || _selectedFigure == null) return;
-            
+
             if (_selectedFigure.FigureTeam == FigureTeam.Team2) return;
-            
+
             Vector2 endPos = GetEndPosition(_mouse_position);
-            
+
             int casted_x_pos = Mathf.FloorToInt(endPos.x / CELL_SIZE);
             int casted_y_pos = Mathf.FloorToInt(endPos.y / CELL_SIZE);
-            
+
             Vector2Int oldPos = _selectedFigure.GetGridCoordinates();
-            
+
             _selectedFigure.MoveOnGrid(casted_x_pos, casted_y_pos);
-            
+
             Vector2Int newPos = _selectedFigure.GetGridCoordinates();
-            if (oldPos != newPos)
+            
+            // Завершаем ход, если фигура переместилась или атаковала
+            if (oldPos != newPos || _selectedFigure.AttackedLastTurn)
             {
                 StartCoroutine(CompletePlayerTurnAfterAnimation());
             }

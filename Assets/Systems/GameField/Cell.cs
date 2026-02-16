@@ -23,8 +23,8 @@ namespace Systems.GameField
 
             _cell_renderer = gameObject.AddComponent<SpriteRenderer>();
             
-            var whiteSprite = Resources.Load<Sprite>("Sprites/FieldSprites/CellWhite");
-            var blackSprite = Resources.Load<Sprite>("Sprites/FieldSprites/CellBlack");
+            var whiteSprite = Resources.Load<Sprite>("Sprites/FieldSprites/tile4");
+            var blackSprite = Resources.Load<Sprite>("Sprites/FieldSprites/tile3");
             
             _cell_renderer.sprite = is_cell_even ? whiteSprite : blackSprite;
         }
