@@ -6,6 +6,7 @@ using Systems.GameField;
 using Unity.VisualScripting;
 using static Systems.Globals.Constants;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Serialization;
 
 namespace Systems.Figures
@@ -106,6 +107,8 @@ namespace Systems.Figures
             gameObject.AddComponent<SpriteRenderer>().sprite = PieceSprite;
             
             gameObject.AddComponent<BoxCollider2D>();
+
+            gameObject.AddComponent<ShadowCaster2D>();
         }
 
         protected bool IsInsideBoard(int x, int y)

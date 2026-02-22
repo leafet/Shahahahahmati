@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Systems.Figures;
+using TMPro;
 using UnityEngine;
 using static Systems.Globals.Constants;
 
@@ -23,10 +24,21 @@ namespace Systems.GameField
 
             _cell_renderer = gameObject.AddComponent<SpriteRenderer>();
             
-            var whiteSprite = Resources.Load<Sprite>("Sprites/FieldSprites/tile4");
-            var blackSprite = Resources.Load<Sprite>("Sprites/FieldSprites/tile3");
+            var whiteSprite = Resources.Load<Sprite>("Sprites/FieldSprites/Sprite-0001");
+            var blackSprite = Resources.Load<Sprite>("Sprites/FieldSprites/Sprite-2");
             
             _cell_renderer.sprite = is_cell_even ? whiteSprite : blackSprite;
+            
+            var textHolder = new GameObject("TextComponent");
+            textHolder.transform.SetParent(transform);
+            textHolder.transform.position = transform.position;
+            
+            var textComponent = textHolder.AddComponent<TextMeshPro>();
+            textComponent.text = cell_coordinates.ToString();
+            textComponent.fontSize = 3;
+            textComponent.alignment = TextAlignmentOptions.Bottom;
+
+            textComponent.rectTransform.sizeDelta = new Vector2(1, 1);
         }
     }
 }

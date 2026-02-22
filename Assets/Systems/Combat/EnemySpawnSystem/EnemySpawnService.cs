@@ -19,20 +19,20 @@ namespace Systems.Combat.EnemySpawnSystem
             ActiveEnemies = new List<BaseFigure>();
             
             Player = GameManagementActions.create_piece(5, 5, FigureType.Pawn, FigureTeam.Team1);
-            for (int i = 0; i < 10; i++)
-            {
-                int pos_x = Random.Range(0, Constants.GRID_SIZE);
-                int pos_y = Random.Range(0, Constants.GRID_SIZE);
-                
-                BaseFigure enemyToAdd = GameManagementActions.create_piece(pos_x, pos_y, FigureType.Pawn, FigureTeam.Team2);
-
-                if (enemyToAdd is not null && !ActiveEnemies.Contains(enemyToAdd))
-                {
-                    ActiveEnemies.Add(enemyToAdd);
-                    enemyToAdd.LivingComponent.OnDeath += (go) => HandleEnemyDeath(enemyToAdd);
-                }
-                    
-            }
+            // for (int i = 0; i < 10; i++)
+            // {
+            //     int pos_x = Random.Range(0, Constants.GRID_SIZE);
+            //     int pos_y = Random.Range(0, Constants.GRID_SIZE);
+            //     
+            //     BaseFigure enemyToAdd = GameManagementActions.create_piece(pos_x, pos_y, FigureType.Pawn, FigureTeam.Team2);
+            //
+            //     if (enemyToAdd is not null && !ActiveEnemies.Contains(enemyToAdd))
+            //     {
+            //         ActiveEnemies.Add(enemyToAdd);
+            //         enemyToAdd.LivingComponent.OnDeath += (go) => HandleEnemyDeath(enemyToAdd);
+            //     }
+            //         
+            // }
         }
 
         private void HandleEnemyDeath(BaseFigure enemy)

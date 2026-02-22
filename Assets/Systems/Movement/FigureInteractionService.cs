@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using Systems.Figures;
 using Systems.Input;
@@ -43,16 +43,21 @@ namespace Systems.Movement
 
             if (_selectedFigure.FigureTeam == FigureTeam.Team2) return;
 
-            Vector2 endPos = GetEndPosition(_mouse_position);
-
-            int casted_x_pos = Mathf.FloorToInt(endPos.x / CELL_SIZE);
-            int casted_y_pos = Mathf.FloorToInt(endPos.y / CELL_SIZE);
+            Vector2Int targetCell = GetTargetCell(_mouse_position);
 
             Vector2Int oldPos = _selectedFigure.GetGridCoordinates();
 
-            _selectedFigure.MoveOnGrid(casted_x_pos, casted_y_pos);
+            Debug.Log($"[Ход] Позиция мыши (экран): {_mouse_position} | " +
+                     $"Позиция мыши (мир): {GetMouseWorldPosition(_mouse_position)} | " +
+                     $"Текущая клетка фигуры: ({oldPos.x}, {oldPos.y}) | " +
+                     $"Целевая клетка: ({targetCell.x}, {targetCell.y})");
+
+            _selectedFigure.MoveOnGrid(targetCell.x, targetCell.y);
 
             Vector2Int newPos = _selectedFigure.GetGridCoordinates();
+            
+            Debug.Log($"[Ход] Новая позиция фигуры: ({newPos.x}, {newPos.y}) | " +
+                     $"Перемещение: {oldPos != newPos} | Атака: {_selectedFigure.AttackedLastTurn}");
             
             // Завершаем ход, если фигура переместилась или атаковала
             if (oldPos != newPos || _selectedFigure.AttackedLastTurn)
@@ -72,24 +77,42 @@ namespace Systems.Movement
         {
             if (!_canMove) return;
             _selectedFigure = GetFigureAtMousePos(_mouse_position);
+            
+            if (_selectedFigure != null)
+            {
+                Debug.Log($"[Клик] Выбрана фигура: {_selectedFigure.gameObject.name} | " +
+                         $"Команда: {_selectedFigure.FigureTeam} | " +
+                         $"Позиция: {_selectedFigure.GetGridCoordinates()}");
+            }
         }
 
-        private Vector2 GetEndPosition(Vector2 mousePos)
+        private Vector3 GetMouseWorldPosition(Vector2 mousePos)
         {
-            if (Camera.main is null) return Vector2.zero;
+            if (Camera.main is null) return Vector3.zero;
+            
+            return Camera.main.ScreenToWorldPoint(
+                new Vector3(mousePos.x, mousePos.y, -Camera.main.transform.position.z));
+        }
+
+        private Vector2Int GetTargetCell(Vector2 mousePos)
+        {
+            if (Camera.main is null) return Vector2Int.zero;
             
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(
                 new Vector3(mousePos.x, mousePos.y, -Camera.main.transform.position.z));
             
-    
-            return mouseWorldPos;
+            int cellX = Mathf.RoundToInt(mouseWorldPos.x / CELL_SIZE);
+            int cellY = Mathf.RoundToInt(mouseWorldPos.y / CELL_SIZE);
+            
+            return new Vector2Int(cellX, cellY);
         }
         
         private BaseFigure GetFigureAtMousePos(Vector2 mousePos)
         {
             if (Camera.main is null) return null;
             
-            Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(
+                new Vector3(mousePos.x, mousePos.y, -Camera.main.transform.position.z));
             
             RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero);
 

@@ -6,26 +6,24 @@ namespace Systems.Combat
     public class BattleEffect : MonoBehaviour
     {
         [SerializeField] private float lifetime = 0.5f;
-        [SerializeField] private float effectWidthPercent = 0.2f; // Ширина эллипса (20% от клетки)
+        [SerializeField] private float effectWidthPercent = 0.2f;
 
-        private float distance = CELL_SIZE; // Расстояние по умолчанию
+        private float distance = CELL_SIZE;
+        private float hueOffset = 0f;
 
         public void SetDistance(float dist)
         {
-            distance = Mathf.Max(dist, CELL_SIZE * 0.5f); // Минимум половина клетки
+            distance = Mathf.Max(dist, CELL_SIZE * 0.5f);
         }
 
         private void Awake()
         {
-            // Создаём красную точку программно
             SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
             {
-                // Устанавливаем материал по умолчанию для спрайтов
                 spriteRenderer.material = new Material(Shader.Find("Sprites/Default"));
-                spriteRenderer.color = Color.red;
+                spriteRenderer.color = Color.white;
 
-                // Создаём круглый спрайт с мягкими краями
                 int textureSize = 32;
                 Texture2D texture = new Texture2D(textureSize, textureSize);
                 Color[] pixels = new Color[textureSize * textureSize];
@@ -39,11 +37,11 @@ namespace Systems.Combat
                         float dist = Mathf.Sqrt(dx * dx + dy * dy);
                         float maxDist = textureSize / 2f;
 
-                        // Круг с мягкими краями
                         if (dist <= maxDist)
                         {
                             float alpha = 1f - Mathf.Pow(dist / maxDist, 2);
-                            pixels[y * textureSize + x] = new Color(1, 0, 0, alpha);
+                            Color rainbowColor = Color.HSVToRGB((x / (float)textureSize + hueOffset) % 1f, 1f, 1f);
+                            pixels[y * textureSize + x] = new Color(rainbowColor.r, rainbowColor.g, rainbowColor.b, alpha);
                         }
                         else
                         {
@@ -60,11 +58,13 @@ namespace Systems.Combat
                 spriteRenderer.sprite = sprite;
             }
 
-            // Устанавливаем размер эффекта:
-            // - по оси X: расстояние между фигурами
-            // - по оси Y: ширина (процент от клетки)
             float effectWidth = CELL_SIZE * effectWidthPercent;
             transform.localScale = new Vector3(distance, effectWidth, 1);
+        }
+
+        private void Update()
+        {
+            hueOffset += Time.deltaTime * 2f;
         }
 
         private void Start()
